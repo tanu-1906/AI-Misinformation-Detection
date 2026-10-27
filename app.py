@@ -6,6 +6,9 @@ import re
 import pandas as pd
 import os
 import joblib
+import easyocr
+from PIL import Image
+import numpy as np
 from supabase import create_client
 from supabase.client import ClientOptions
 from dotenv import load_dotenv
@@ -54,6 +57,21 @@ def clean_text(text):
     text = re.sub(r"[^a-zA-Z\s]", "", text)
     text = re.sub(r"\s+", " ", text)
     return text.strip()
+    # OCR: Extract text from uploaded image
+@st.cache_resource
+def load_ocr_reader():
+    return easyocr.Reader(['en'], gpu=False)
+
+
+def extract_text_from_image(uploaded_file):
+    image = Image.open(uploaded_file).convert("RGB")
+    image_array = np.array(image)
+
+    reader = load_ocr_reader()
+    results = reader.readtext(image_array, detail=0)
+
+    return " ".join(results)
+    
 
 
 # Page configuration
