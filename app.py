@@ -544,66 +544,37 @@ if analyze:
     if not news_text.strip():
         st.warning("Please enter some news text.")
     else:
-        cleaned_news = clean_text(news_text)
-        news_vector = vectorizer.transform([cleaned_news])
+    # Predict news
+cleaned_news = clean_text(news_text)
+news_vector = vectorizer.transform([cleaned_news])
 
-        prediction = model.predict(news_vector)[0]
-        probabilities = model.predict_proba(news_vector)[0]
-        st.write("DEBUG - Model classes:", model.classes_)
-        st.write("DEBUG - Prediction:", prediction)
-        st.write("DEBUG - Probabilities:", model.predict_proba(news_vector)[0])
+prediction = int(model.predict(news_vector)[0])
+probabilities = model.predict_proba(news_vector)[0]
 
+# Get probabilities according to model classes
+class_probabilities = dict(zip(model.classes_, probabilities))
 
-        fake_probability = 0.0
-        real_probability = 0.0
+fake_probability = float(class_probabilities.get(0, 0)) * 100
+real_probability = float(class_probabilities.get(1, 0)) * 100
 
-        for i, class_label in enumerate(model.classes_):
-            if class_label == 0:
-                fake_probability = float(probabilities[i]) * 100
-            elif class_label == 1:
-                real_probability = float(probabilities[i]) * 100
+st.subheader("🔍 Prediction Result")
 
-        confidence = max(probabilities) * 100
+st.metric("Fake Probability", f"{fake_probability:.2f}%")
+st.metric("Real Probability", f"{real_probability:.2f}%")
 
-        if prediction == 0:
-            result_label = "Fake"
-        elif prediction == 1:
-            result_label = "Real"
-        else:
-            result_label = "Unknown"
+# Display result cautiously
+if max(fake_probability, real_probability) < 70:
+    st.warning(
+        "❔ Inconclusive Result — Please Verify with Trusted Sources"
+    )
+elif prediction == 0:
+    st.error("⚠️ Potentially Misleading — Verification Needed")
+else:
+    st.success("✅ Likely Reliable — Still Verify with Trusted Sources")
 
-
-        prediction_text = str(prediction).strip().lower()
-
-        if prediction_text in ["0", "fake", "false", "unreliable"]:
-            result_label = "Fake"
-        elif prediction_text in ["1", "real", "true", "reliable"]:
-            result_label = "Real"
-        else:
-            result_label = "Unknown"
-
-        st.subheader("📊 Analysis Results")
-        st.metric("Model Confidence", f"{confidence:.2f}%")
-
-        if result_label == "Fake":
-            st.error("⚠️ Model Prediction: Potentially Misleading")
-        elif result_label == "Real":
-            st.success("✅ Model Prediction: Likely Reliable")
-        else:
-            st.warning("⚠️ Model Prediction: Unknown")
-
-        st.write(f"Fake Probability: {fake_probability:.2f}%")
-        st.write(f"Real Probability: {real_probability:.2f}%")
-
-        with st.expander("🔧 Model Debug Information"):
-            st.write("Model classes:", list(model.classes_))
-            st.write("Predicted label:", prediction)
-            st.write("Cleaned text:", cleaned_news)
-
-        st.caption(
-            "Model predictions are estimates, not proof of factual accuracy. "
-            "Verify important news using trusted sources."
-        )
+st.caption(
+    "AI predictions are estimates, not proof of factual accuracy."
+)
 
         # Save prediction to Supabase
         import time
