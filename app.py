@@ -58,8 +58,8 @@ def clean_text(text):
 
 # Page configuration
 st.set_page_config(
-    page_title="AI Misinformation Detector",
-    page_icon="🔍",
+    page_title="Verifact AI",
+    page_icon="🛡️",
     layout="wide"
 )
 
@@ -475,7 +475,12 @@ if st.session_state.user is None:
 user = st.session_state.user
 
 with st.sidebar:
-    st.title("🔍 AI Detector")
+st.title("🛡️ Verifact AI")
+st.subheader("Verify Smarter. Share Safer.")
+st.write(
+    "AI-powered misinformation detection with "
+    "Google Fact Check and web search."
+)
 
     if user:
         st.success("Logged in successfully")
@@ -494,14 +499,13 @@ with st.sidebar:
 
 # Main heading
 st.markdown(
-    '<div class="main-title">AI-Based Social Media '
-    'Misinformation Detection</div>',
+    '<div class="main-title">🛡️ Verifact AI</div>',
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="subtitle">Analyze news and social media '
-    'posts using Machine Learning</div>',
+    '<p style="text-align:center; color:#64748b; '
+    'font-size:17px;">Verify Smarter. Share Safer.</p>',
     unsafe_allow_html=True
 )
 
