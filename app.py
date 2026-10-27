@@ -536,85 +536,85 @@ news_text = st.text_area(
 
 analyze = st.button("🔍 Analyze News")
 
-
 # Prediction
-
-
 
 if analyze:
     if not news_text.strip():
         st.warning("Please enter some news text.")
     else:
-    # Predict news
+        # Predict news
         cleaned_news = clean_text(news_text)
         news_vector = vectorizer.transform([cleaned_news])
-model = joblib.load("misinformation_model.pkl")
-vectorizer = joblib.load("tfidf_vectorizer.pkl")
-prediction = int(model.predict(news_vector)[0])
-probabilities = model.predict_proba(news_vector)[0]
 
-# Get probabilities according to model classes
-class_probabilities = dict(zip(model.classes_, probabilities))
+        prediction = int(model.predict(news_vector)[0])
+        probabilities = model.predict_proba(news_vector)[0]
 
-fake_probability = float(class_probabilities.get(0, 0)) * 100
-real_probability = float(class_probabilities.get(1, 0)) * 100
+        # Get probabilities according to model classes
+        class_probabilities = dict(zip(model.classes_, probabilities))
 
-st.subheader("🔍 Prediction Result")
+        fake_probability = float(class_probabilities.get(0, 0)) * 100
+        real_probability = float(class_probabilities.get(1, 0)) * 100
+        confidence = max(fake_probability, real_probability)
 
-st.metric("Fake Probability", f"{fake_probability:.2f}%")
-st.metric("Real Probability", f"{real_probability:.2f}%")
+        st.subheader("🔍 Prediction Result")
 
-# Display result cautiously
-if max(fake_probability, real_probability) < 70:
-    st.warning(
-        "❔ Inconclusive Result — Please Verify with Trusted Sources"
-    )
-elif prediction == 0:
-    st.error("⚠️ Potentially Misleading — Verification Needed")
-else:
-    st.success("✅ Likely Reliable — Still Verify with Trusted Sources")
+        col1, col2 = st.columns(2)
 
-st.caption(
-    "AI predictions are estimates, not proof of factual accuracy."
-)
-# Save prediction to Supabase
-import time
+        col1.metric(
+            "Fake Probability",
+            f"{fake_probability:.2f}%"
+        )
 
-try:
-    user = st.session_state.user
+        col2.metric(
+            "Real Probability",
+            f"{real_probability:.2f}%"
+        )
 
-    if user:
-        history_data = {
-            "user_id": str(user.id),
-            "news_text": news_text,
-            "prediction": result_label,
-            "confidence": round(float(confidence), 2),
-            "fake_probability": round(float(fake_probability), 2),
-            "real_probability": round(float(real_probability), 2)
-        }
+        # Display result
+        if confidence < 70:
+            result_label = "Inconclusive"
+            st.warning(
+                "❔ Inconclusive Result — Please Verify with Trusted Sources"
+            )
 
-        saved = False
+        elif prediction == 0:
+            result_label = "Fake"
+            st.error(
+                "⚠️ Potentially Misleading — Verification Needed"
+            )
 
-        for attempt in range(3):
-            try:
+        else:
+            result_label = "Real"
+            st.success(
+                "✅ Likely Reliable — Still Verify with Trusted Sources"
+            )
+
+        st.caption(
+            "AI predictions are estimates, not proof of factual accuracy."
+        )
+
+        # Save prediction to Supabase
+        try:
+            user = st.session_state.user
+
+            if user:
+                history_data = {
+                    "user_id": str(user.id),
+                    "news_text": news_text,
+                    "prediction": result_label,
+                    "confidence": round(float(confidence), 2),
+                    "fake_probability": round(float(fake_probability), 2),
+                    "real_probability": round(float(real_probability), 2)
+                }
+
                 supabase.table("prediction_history").insert(
                     history_data
                 ).execute()
 
-                saved = True
-                break
+                st.success("Prediction saved to history!")
 
-            except Exception:
-                if attempt < 2:
-                    time.sleep(2)
-                else:
-                    raise
-
-        if saved:
-            st.success("Prediction saved to history!")
-
-except Exception as e:
-    st.warning(f"Could not save prediction: {e}")
+        except Exception as e:
+            st.warning(f"Could not save prediction: {e}")
 
        
 
