@@ -577,7 +577,7 @@ st.caption(
 )
 
         # Save prediction to Supabase
-        import time
+import time
 
         try:
             user = st.session_state.user
