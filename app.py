@@ -8,11 +8,16 @@ import os
 from supabase import create_client
 from supabase.client import ClientOptions
 from dotenv import load_dotenv
-# Load Supabase credentials from .env
+
+# Load Supabase credentials
 load_dotenv()
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+try:
+    SUPABASE_URL = st.secrets["SUPABASE_URL"]
+    SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+except Exception:
+    SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 @st.cache_resource
 def get_supabase_client():
