@@ -547,7 +547,8 @@ if analyze:
     # Predict news
         cleaned_news = clean_text(news_text)
         news_vector = vectorizer.transform([cleaned_news])
-
+model = joblib.load("misinformation_model.pkl")
+vectorizer = joblib.load("tfidf_vectorizer.pkl")
 prediction = int(model.predict(news_vector)[0])
 probabilities = model.predict_proba(news_vector)[0]
 
