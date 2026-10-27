@@ -553,29 +553,25 @@ if analyze:
         st.write("DEBUG - Prediction:", prediction)
         st.write("DEBUG - Probabilities:", model.predict_proba(news_vector)[0])
 
+
         fake_probability = 0.0
         real_probability = 0.0
-        
+
         for i, class_label in enumerate(model.classes_):
             if class_label == 0:
-                fake_probability = probabilities[i]
+                fake_probability = float(probabilities[i]) * 100
             elif class_label == 1:
-                real_probability = probabilities[i]
-
-
-        st.write("DEBUG - Classes:", model.classes_.tolist())
-        st.write("DEBUG - Prediction:", int(prediction))
-        st.write("DEBUG - Probabilities:", probabilities.tolist())
-
-        for label, prob in zip(model.classes_, probabilities):
-            label_text = str(label).strip().lower()
-
-            if label_text in ["0", "fake", "false", "unreliable"]:
-                fake_probability = float(prob) * 100
-            elif label_text in ["1", "real", "true", "reliable"]:
-                real_probability = float(prob) * 100
+                real_probability = float(probabilities[i]) * 100
 
         confidence = max(probabilities) * 100
+
+        if prediction == 0:
+            result_label = "Fake"
+        elif prediction == 1:
+            result_label = "Real"
+        else:
+            result_label = "Unknown"
+
 
         prediction_text = str(prediction).strip().lower()
 
