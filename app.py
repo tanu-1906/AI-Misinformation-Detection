@@ -556,6 +556,10 @@ if analyze:
         fake_probability = 0.0
         real_probability = 0.0
 
+        st.write("DEBUG - Classes:", model.classes_.tolist())
+        st.write("DEBUG - Prediction:", int(prediction))
+        st.write("DEBUG - Probabilities:", probabilities.tolist())
+
         for label, prob in zip(model.classes_, probabilities):
             label_text = str(label).strip().lower()
 
