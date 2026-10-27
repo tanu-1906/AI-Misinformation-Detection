@@ -5,6 +5,7 @@ import pickle
 import re
 import pandas as pd
 import os
+import joblib
 from supabase import create_client
 from supabase.client import ClientOptions
 from dotenv import load_dotenv
