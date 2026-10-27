@@ -474,14 +474,13 @@ if st.session_state.user is None:
 
 user = st.session_state.user
 
-with st.sidebar:
-st.title("🛡️ Verifact AI")
-st.subheader("Verify Smarter. Share Safer.")
-st.write(
-    "AI-powered misinformation detection with "
-    "Google Fact Check and web search."
-)
-
+with st.container():
+    st.title("🛡️ Verifact AI")
+    st.markdown(
+        '<p style="text-align:center; color:#64748b; '
+        'font-size:17px;">Verify Smarter. Share Safer.</p>',
+        unsafe_allow_html=True
+    )
     if user:
         st.success("Logged in successfully")
         st.write(f"Welcome, {user.email}")
