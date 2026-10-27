@@ -551,9 +551,38 @@ st.markdown("""
 
 news_text = st.text_area(
     "Enter News / Social Media Post",
-    placeholder="Paste your news or social media post here...",
+    value=st.session_state.get("image_news_text", ""),
+    placeholder="Paste news text or extract it from an image...",
     height=220
 )
+# Image Upload Section
+st.subheader("🖼️ Verify News from Image")
+
+uploaded_image = st.file_uploader(
+    "Upload a news screenshot or social media post",
+    type=["png", "jpg", "jpeg"],
+    key="news_image"
+)
+
+if uploaded_image is not None:
+    st.image(
+        uploaded_image,
+        caption="Uploaded News Image",
+        use_container_width=True
+    )
+
+    if st.button("📝 Extract Text from Image"):
+        try:
+            extracted_text = extract_text_from_image(uploaded_image)
+
+            if extracted_text.strip():
+                st.session_state["image_news_text"] = extracted_text
+                st.success("Text extracted successfully!")
+            else:
+                st.warning("No readable text found in this image.")
+
+        except Exception as e:
+            st.error(f"Image text extraction failed: {e}")
 
 analyze = st.button("🔍 Analyze News")
 
