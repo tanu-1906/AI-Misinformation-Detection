@@ -9,27 +9,35 @@ from supabase import create_client
 from supabase.client import ClientOptions
 from dotenv import load_dotenv
 
+
 # Load Supabase credentials
 load_dotenv()
 
 try:
-    SUPABASE_URL = st.secrets["SUPABASE_URL"]
-    SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+    SUPABASE_URL = st.secrets.get("SUPABASE_URL", "")
+    SUPABASE_KEY = st.secrets.get("SUPABASE_KEY", "")
 except Exception:
-    SUPABASE_URL = os.getenv("SUPABASE_URL")
-    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+    SUPABASE_URL = ""
+    SUPABASE_KEY = ""
+
+if not SUPABASE_URL:
+    st.error("SUPABASE_URL missing. Check Streamlit Cloud Secrets.")
+    st.stop()
+
+if not SUPABASE_KEY:
+    st.error("SUPABASE_KEY missing. Check Streamlit Cloud Secrets.")
+    st.stop()
 
 @st.cache_resource
 def get_supabase_client():
     return create_client(
-        SUPABASE_URL,
-        SUPABASE_KEY,
-        options=ClientOptions(
-            flow_type="pkce"
-        )
+        SUPABASE_URL.strip(),
+        SUPABASE_KEY.strip(),
+        options=ClientOptions(flow_type="pkce")
     )
 
 supabase = get_supabase_client()
+
 # Load trained model
 with open("misinformation_model.pkl", "rb") as file:
     model = pickle.load(file)
