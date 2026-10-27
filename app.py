@@ -545,8 +545,8 @@ if analyze:
         st.warning("Please enter some news text.")
     else:
     # Predict news
-cleaned_news = clean_text(news_text)
-news_vector = vectorizer.transform([cleaned_news])
+        cleaned_news = clean_text(news_text)
+        news_vector = vectorizer.transform([cleaned_news])
 
 prediction = int(model.predict(news_vector)[0])
 probabilities = model.predict_proba(news_vector)[0]
