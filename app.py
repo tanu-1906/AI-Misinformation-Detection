@@ -555,6 +555,13 @@ if analyze:
 
         fake_probability = 0.0
         real_probability = 0.0
+        
+        for i, class_label in enumerate(model.classes_):
+            if class_label == 0:
+                fake_probability = probabilities[i]
+            elif class_label == 1:
+                real_probability = probabilities[i]
+
 
         st.write("DEBUG - Classes:", model.classes_.tolist())
         st.write("DEBUG - Prediction:", int(prediction))
