@@ -575,43 +575,44 @@ else:
 st.caption(
     "AI predictions are estimates, not proof of factual accuracy."
 )
-
-        # Save prediction to Supabase
+# Save prediction to Supabase
 import time
 
-        try:
-            user = st.session_state.user
+try:
+    user = st.session_state.user
 
-            if user:
+    if user:
+        history_data = {
+            "user_id": str(user.id),
+            "news_text": news_text,
+            "prediction": result_label,
+            "confidence": round(float(confidence), 2),
+            "fake_probability": round(float(fake_probability), 2),
+            "real_probability": round(float(real_probability), 2)
+        }
 
-                history_data = {
-                    "user_id": str(user.id),
-                    "news_text": news_text,
-                    "prediction": result_label,
-                    "confidence": round(float(confidence), 2),
-                    "fake_probability": round(float(fake_probability), 2),
-                    "real_probability": round(float(real_probability), 2)
-                }
+        saved = False
 
-                saved = False
-                for attempt in range(3):
-                    try:
-                        supabase.table("prediction_history").insert(
-                            history_data
-                        ).execute()
-                        saved = True
-                        break
-                    except Exception:
-                        if attempt < 2:
-                            time.sleep(2)
-                        else:
-                            raise
+        for attempt in range(3):
+            try:
+                supabase.table("prediction_history").insert(
+                    history_data
+                ).execute()
 
-                if saved:
-                    st.success("Prediction saved to history!")
+                saved = True
+                break
 
-        except Exception as e:
-            st.warning(f"Could not save prediction: {e}")
+            except Exception:
+                if attempt < 2:
+                    time.sleep(2)
+                else:
+                    raise
+
+        if saved:
+            st.success("Prediction saved to history!")
+
+except Exception as e:
+    st.warning(f"Could not save prediction: {e}")
 
        
 
