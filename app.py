@@ -471,7 +471,7 @@ if st.session_state.user is None:
 
             except Exception as e:
                 st.error(f"Signup failed: {e}")
-                 if st.button("Continue with Google", key="google_login"):
+        if st.button("Continue with Google", key="google_login"):
            try:
                response = supabase.auth.sign_in_with_oauth({
                    "provider": "google",
