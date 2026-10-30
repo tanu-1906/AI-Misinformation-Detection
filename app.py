@@ -491,7 +491,7 @@ if st.session_state.user is None:
 # Sidebar and Logout
 
 user = st.session_state.user
-    if user:
+if user:
         st.success("Logged in successfully")
         st.write(f"Welcome, {user.email}")
 
