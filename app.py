@@ -480,7 +480,7 @@ if st.session_state.user is None:
                    }
                })
 
-               st.markdown(f"[Continue with Google]({response.url})")
+               st.link_button("Continue with Google", response.url)
 
            except Exception as e:
                st.error(f"Google login failed: {e}")
