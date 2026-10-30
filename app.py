@@ -597,6 +597,8 @@ if analyze:
         fake_probability = float(class_probabilities.get(0, 0)) * 100
         real_probability = float(class_probabilities.get(1, 0)) * 100
         confidence = max(fake_probability, real_probability)
+        st.write("Fake Probability:", round(fake_probability, 2), "%")
+        st.write("Real Probability:", round(real_probability, 2), "%")
 
         st.subheader("🔍 Prediction Result")
 
