@@ -477,7 +477,7 @@ if st.session_state.user is None:
             response = supabase.auth.sign_in_with_oauth({
                 "provider": "google",
                 "options": {
-                    "redirect_to = "https://ai-misinformation-detection-gqmyvvkthqrnqujvptypwx.streamlit.app"
+                    redirect_to = "https://ai-misinformation-detection-gqmyvvkthqrnqujvptypwx.streamlit.app"
                 }
             })
 
