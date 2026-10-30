@@ -73,6 +73,9 @@ print("Accuracy:", round(accuracy * 100, 2), "%")
 
 print("\nClassification Report:")
 print(classification_report(y_test, predictions))
+print("Model Classes:", model.classes_)
+print("Fake Label: 0")
+print("Real Label: 1")
 
 # Save model
 with open("misinformation_model.pkl", "wb") as file:
