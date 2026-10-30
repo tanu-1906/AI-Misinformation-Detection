@@ -584,12 +584,6 @@ if analyze:
     if not news_text.strip():
         st.warning("Please enter some news text.")
     else:
-        if re.search(r'[\u0900-\u097F]', news_text):
-            st.warning(
-                "Marathi language is currently not supported. "
-                "Please verify this news manually."
-            )
-            st.stop()
         # Predict news
         cleaned_news = clean_text(news_text)
         news_vector = vectorizer.transform([cleaned_news])
